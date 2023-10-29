@@ -1,6 +1,5 @@
-## CS433 - Operating Systems
 # Programming Assignment 3
-### Scheduling Algorithms
+## Scheduling Algorithms
 
 * First-Come, First-Served (FCFS)
     * Schedules tasks in the order in which they request the CPU.
