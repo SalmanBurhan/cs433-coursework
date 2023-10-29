@@ -33,6 +33,10 @@ public:
     unsigned int burst_time;
     // The arrival time of the process
     unsigned int arrival_time;
+    // The waiting time of the process
+    unsigned int waiting_time;
+    // The turnaround time of the process
+    unsigned int turnaround_time;
 
     /**
      * @brief Construct a new PCB object
@@ -47,6 +51,8 @@ public:
         this->priority = priority;
         this->burst_time = burst_time;
         this->arrival_time = 0;
+        this->waiting_time = 0;
+        this->turnaround_time = 0;
     }
 
     /**
