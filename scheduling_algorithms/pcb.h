@@ -1,12 +1,10 @@
 /**
  * Assignment 1: priority queue of processes
  * @file pcb.h
- * @author ??? (TODO: your name)
+ * @author Salman Burhan
  * @brief This is the header file for the PCB class, a process control block.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to addPCB sufficient comments to your code
 
 #pragma once
 #include <iostream>
@@ -22,7 +20,8 @@ using namespace std;
  *       - priority
  *      You may add more fields if you need.
  */
-class PCB {
+class PCB
+{
 public:
     // Name of the process
     string name;
@@ -41,7 +40,8 @@ public:
      * @param priority: the priority of the process in the range 1-50. Larger number represents higher priority
      * @param state the state of the process.
      */
-    PCB(string name, unsigned int id = 0, unsigned int priority = 1, unsigned int burst_time = 0) {
+    PCB(string name, unsigned int id = 0, unsigned int priority = 1, unsigned int burst_time = 0)
+    {
         this->id = id;
         this->name = name;
         this->priority = priority;
@@ -58,7 +58,8 @@ public:
     /**
      * @brief Print the PCB object.
      */
-    void print() {
+    void print()
+    {
         cout << "Process " << id << ": " << name << " has priority " << priority << " and burst time "
              << burst_time << endl;
     }
