@@ -4,6 +4,9 @@
 # VSCode
 .vscode/
 
+# Build Directory
+build/
+
 # Prerequisites
 *.d
 
