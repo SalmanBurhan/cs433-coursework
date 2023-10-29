@@ -17,8 +17,7 @@ class SchedulerFCFS : public Scheduler
 {
 
 private:
-    vector<PCB> processes, completed_processes;
-    vector<float> turn_around_times, wait_times;
+    vector<PCB> processes;
 
 public:
     /**
