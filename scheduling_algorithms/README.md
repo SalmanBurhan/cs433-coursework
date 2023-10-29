@@ -2,9 +2,20 @@
 # Programming Assignment 3
 ### Scheduling Algorithms
 
+* First-Come, First-Served (FCFS)
+    * Schedules tasks in the order in which they request the CPU.
+* Shortest-Job-First (SJF)
+    * Schedules tasks in order of the length of the tasks' next CPU burst.
+* Priority Scheduling
+    * Schedules tasks based on priority. A bigger number means higher priority.
+* Round-Robin (RR)
+    * Each task runs for a time quantum (or for the remainder of its CPU burst).
+
 In this assignment, you will implement some basic scheduling algorithms discussed in the class. It is based on the programming project in chapter 5 of the textbook.
 
 Complete the implementations of scheduling algorithms in the provided source files, and remove "TODO"s from the comments after you are done. Read on the course website for more details and submission instructions.
+
+### Starter Code
 
 | `pcb.h` |
 | ------- |
