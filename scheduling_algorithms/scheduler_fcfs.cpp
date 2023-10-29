@@ -41,7 +41,7 @@ void SchedulerFCFS::print_results()
 
     for (const PCB &process : this->processes)
     {
-        cout << "T" << process.id + 1
+        cout << process.name
              << " turn-around time = "
              << process.turnaround_time
              << ", waiting time = "
@@ -59,10 +59,27 @@ void SchedulerFCFS::print_results()
 }
 
 /**
- * @brief This function simulates the scheduling of processes in the ready queue.
- *        It stops when all processes are finished.
+ * @brief This function simulates the run order of the processes
+ *        in the ready queue.
  */
-void SchedulerFCFS::simulate()
+void SchedulerFCFS::simulate_run_order()
+{
+    for (PCB process : this->processes)
+    {
+        cout << "Running Process "
+             << process.name
+             << " for "
+             << process.burst_time
+             << " time units."
+             << endl;
+    }
+}
+
+/**
+ * @brief This function calculates the waiting_time and turnaround_time
+ *        of each process in the ready queue.
+ */
+void SchedulerFCFS::calculate_times()
 {
     this->processes[0].waiting_time = 0;
     this->processes[0].turnaround_time = this->processes[0].burst_time;
@@ -83,4 +100,14 @@ void SchedulerFCFS::simulate()
             this->processes[i].waiting_time +
             this->processes[i].burst_time;
     }
+}
+
+/**
+ * @brief This function simulates the scheduling of processes in the ready queue.
+ *        It stops when all processes are finished.
+ */
+void SchedulerFCFS::simulate()
+{
+    this->simulate_run_order();
+    this->calculate_times();
 }

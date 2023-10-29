@@ -47,6 +47,18 @@ public:
      *        It stops when all processes are finished.
      */
     void simulate() override;
+
+    /**
+     * @brief This function simulates the run order of the processes
+     *        in the ready queue.
+     */
+    void simulate_run_order();
+
+    /**
+     * @brief This function calculates the waiting_time and turnaround_time
+     *        of each process in the ready queue.
+     */
+    void calculate_times();
 };
 
 #endif // ASSIGN3_SCHEDULER_FCFS_H
