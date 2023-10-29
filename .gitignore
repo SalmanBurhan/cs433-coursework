@@ -2,7 +2,7 @@
 .DS_STORE
 
 # VSCode
-.idea/
+.vscode/
 
 # Prerequisites
 *.d
