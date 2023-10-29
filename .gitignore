@@ -1,6 +1,9 @@
 # MacOS System Files
 .DS_STORE
 
+# VSCode
+.idea/
+
 # Prerequisites
 *.d
 
