@@ -13,16 +13,18 @@
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     std::cout << "CS 433 Programming assignment 3" << std::endl;
-    std::cout << "Author: xxxxxx and xxxxxxx" << std::endl;     // TODO: add your name
-    std::cout << "Date: xx/xx/20xx" << std::endl;               // TODO: add date
+    std::cout << "Author: Salman Burhan" << std::endl;
+    std::cout << "Date: 10/28/2023" << std::endl;
     std::cout << "Course: CS433 (Operating Systems)" << std::endl;
     std::cout << "Description : test Priority scheduling algorithm " << std::endl;
     std::cout << "=================================" << std::endl;
 
     // Make sure the user has provided the input file name
-    if (argc < 2) {
+    if (argc < 2)
+    {
         cerr << "Usage: " << argv[0] << " <input_file>" << endl;
         exit(1);
     }
@@ -30,14 +32,16 @@ int main(int argc, char *argv[]) {
     // Read the input file
     ifstream input_file(argv[1]);
     // Make sure the file is open
-    if (!input_file.is_open()) {
+    if (!input_file.is_open())
+    {
         cerr << "Error: Unable to open file " << argv[1] << endl;
         exit(1);
     }
     string line;
     vector<PCB> process_list;
     int id = 0;
-    while(getline(input_file, line)) {
+    while (getline(input_file, line))
+    {
         // Split the line into tokens
         istringstream ss(line);
         string name;

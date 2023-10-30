@@ -1,22 +1,20 @@
 /**
-* Assignment 3: CPU Scheduler
+ * Assignment 3: CPU Scheduler
  * @file scheduler_priority.h
- * @author ??? (TODO: your name)
+ * @author Salman Burhan
  * @brief This Scheduler class implements the Priority scheduling algorithm.
  * @version 0.1
  */
-//You must complete the all parts marked as "TODO". Delete "TODO" after you are done.
-// Remember to add sufficient and clear comments to your code
-
 
 #ifndef ASSIGN3_SCHEDULER_PRIORITY_H
 #define ASSIGN3_SCHEDULER_PRIORITY_H
 
 #include "scheduler.h"
 
-class SchedulerPriority : public Scheduler {
+class SchedulerPriority : public Scheduler
+{
 private:
-    // TODO: add necessary member variables here for your implementation
+    std::vector<PCB> processes;
 
 public:
     /**
@@ -34,7 +32,7 @@ public:
      *        It is used to initialize the scheduler.
      * @param process_list The list of processes in the simulation.
      */
-    void init(std::vector<PCB>& process_list) override;
+    void init(std::vector<PCB> &process_list) override;
 
     /**
      * @brief This function is called once after the simulation ends.
@@ -48,7 +46,31 @@ public:
      */
     void simulate() override;
 
+    /**
+     * @brief This function simulates the run order of the processes
+     *        in the ready queue.
+     */
+    void simulate_run_order();
+
+    /**
+     * @brief This function sorts the processes in the ready queue by
+     *        priority in descending order, yielding tied values to
+     *        the process with the smaller id.
+     */
+    void process_sort_priority();
+
+    /**
+     * @brief This function sorts the processes in the ready queue by
+     *        the arrival time, yielding tied values to the process with
+     *        the smaller id.
+     */
+    void process_sort_default();
+
+    /**
+     * @brief This function calculates the waiting_time and turnaround_time
+     *        of each process in the ready queue.
+     */
+    void calculate_times();
 };
 
-
-#endif //ASSIGN3_SCHEDULER_PRIORITY_H
+#endif // ASSIGN3_SCHEDULER_PRIORITY_H
