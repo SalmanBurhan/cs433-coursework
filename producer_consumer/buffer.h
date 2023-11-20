@@ -1,13 +1,16 @@
 /**
  * Assignment 4: Producer Consumer Problem
  * @file buffer.h
- * @author ??? (TODO: your name)
+ * @author Salman Burhan
  * @brief header file for the buffer class
  * @version 0.1
  */
 
 #ifndef ASSIGN4_BUFFER_H
 #define ASSIGN4_BUFFER_H
+
+#include <pthread.h>
+#include <semaphore.h>
 
 #include <vector>
 
@@ -20,8 +23,8 @@ typedef int buffer_item;
  */
 class Buffer {
    private:
-    std::vector<buffer_item> items;
-    int maxSize;
+    int buffer[5] = {0, 0, 0, 0};
+    int size = 5;
     int count;
 
    public:
@@ -29,7 +32,7 @@ class Buffer {
      * @brief Construct a new Buffer object
      * @param size the size of the buffer
      */
-    Buffer(int size = 5);
+    Buffer();
 
     /**
      * @brief Destroy the Buffer object

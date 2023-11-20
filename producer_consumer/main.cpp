@@ -1,7 +1,7 @@
 /**
  * Assignment 4: Producer Consumer Problem
  * @file main.cpp
- * @author ??? (TODO: your name)
+ * @author Salman Burhan
  * @brief The main program for the producer consumer problem.
  * @version 0.1
  */
@@ -16,11 +16,11 @@
 
 #include "buffer.h"
 
-// global buffer object
+bool should_run = true;
 Buffer buffer;
-sem_t *empty_sempahore;
-sem_t *full_sempahore;
-pthread_mutex_t lock;
+pthread_mutex_t mutex;
+sem_t sema_empty;
+sem_t sema_full;
 
 // Producer thread function
 // Add your implementation of the producer thread here
@@ -29,28 +29,26 @@ void *producer(void *param) {
     // For example, thread 1 will insert 1, thread 2 will insert 2, and so on.
     buffer_item item = *((int *)param);
 
-    while (true) {
+    while (should_run) {
         /* sleep for a random period of time */
         usleep(rand() % 1000000);
 
-        // Add synchronization code here
-        // Lock
-        sem_wait(empty_sempahore);
-        pthread_mutex_lock(&lock);
+        /* wait for signal */
+        sem_wait(&sema_empty);
+        /* lock to prevent parallel threads */
+        pthread_mutex_lock(&mutex);
 
         if (buffer.insert_item(item)) {
             std::cout << "Producer " << item << ": Inserted item " << item
                       << std::endl;
             buffer.print_buffer();
         } else {
-            std::cout << "Producer error condition"
-                      << std::endl;  // shouldn't come here
+            std::cout << "Producer error condition" << std::endl;
         }
-
-        // Add synchronization code here
-        // Unlock
-        pthread_mutex_unlock(&lock);
-        sem_post(full_sempahore);
+        /* unlock */
+        pthread_mutex_unlock(&mutex);
+        /* signal */
+        sem_post(&sema_full);
     }
 }
 
@@ -59,28 +57,27 @@ void *producer(void *param) {
 void *consumer(void *param) {
     buffer_item item;
 
-    while (true) {
+    while (should_run) {
         /* sleep for a random period of time */
         usleep(rand() % 1000000);
 
-        // Add synchronization code here
-        // Lock
-        sem_wait(full_sempahore);
-        pthread_mutex_lock(&lock);
+        /* wait for signal */
+        sem_wait(&sema_full);
+        /* lock to prevent parallel threads */
+        pthread_mutex_lock(&mutex);
 
         if (buffer.remove_item(&item)) {
-            std::cout << "Consumer " << item << ": Removed item " << item
-                      << std::endl;
+            std::cout << "Consumer "
+                      << " Removed item " << item << std::endl;
             buffer.print_buffer();
         } else {
-            std::cout << "Consumer error condition"
-                      << std::endl;  // shouldn't come here
+            std::cout << "Consumer error condition" << std::endl;
         }
 
-        // Add synchronization code here
-        // Unlock
-        pthread_mutex_unlock(&lock);
-        sem_post(empty_sempahore);
+        /* unlock */
+        pthread_mutex_unlock(&mutex);
+        /* signal */
+        sem_post(&sema_empty);
     }
 }
 
@@ -125,57 +122,46 @@ int main(int argc, char *argv[]) {
     }
 
     /* 2. Initialize buffer and synchronization primitives */
-    pthread_t producer_thread;
-    pthread_t consumer_thread;
-    lock = PTHREAD_MUTEX_INITIALIZER;  // Convenience Initializer
-    // Semaphore Initalizer Arguments: [Name] [isProcessShared], [Value]
-    empty_sempahore = sem_open("/empty_semaphore", 0, buffer.get_size());
-    full_sempahore = sem_open("/full_semaphore", 0, 0);
+    pthread_t thread;
+    int producer_ids[num_producer];
 
     /*
      * MacOS (Darwin) doesn’t support unnamed semaphores, and therefore:
-        * sem_init()
-        * sem_destroy()
+     *  sem_init()
+     *  sem_destroy()
      * MacOS (Darwin) only supports named semaphores, and therefore:
-        * sem_open()
-        * sem_close()
-    /*
-    /* ---------------------------------------------------
-        sem_init(&empty_sempahore, 0, buffer.get_size());
-        sem_init(&full_sempahore, 0, 0);
-       --------------------------------------------------- */
+     *  sem_open()
+     *  sem_close()
+     */
+    sem_init(&sema_empty, 0, buffer.get_size());
+    sem_init(&sema_full, 0, 0);
 
     /* 3. Create producer thread(s).
      * You should pass an unique int ID to each producer thread, starting
      * from 1 to number of threads */
-    int uid[num_producer];  // Unique IDs of the producers
-    for (int i = 0; i < num_producer; i++) {
-        uid[i] = i + 1;
-        // Initializer Arguments:
-        // [thread] [attributes] [threadFunction] [identifier]
-        pthread_create(&producer_thread, nullptr, producer, &uid[i]);
+
+    /* 3. Create producer thread(s). */
+    for (int i = 1; i <= num_producer; i++) {
+        producer_ids[i - 1] = i;
+        // Arguments: [thread] [attributes] [threadFunction] [identifier]
+        pthread_create(&thread, NULL, &producer, &producer_ids[i - 1]);
     }
 
-    /* 4. Create consumer thread(s) */
-    for (int i = 0; i < num_consumer; i++) {
-        // Initializer Arguments:
-        // [thread] [attributes] [threadFunction] [identifier]
-        pthread_create(&consumer_thread, nullptr, consumer, nullptr);
+    /* 3. Create consumer thread(s). */
+    for (int i = 1; i <= num_consumer; i++) {
+        // Arguments: [thread] [attributes] [threadFunction] [identifier]
+        pthread_create(&thread, NULL, &consumer, NULL);
     }
 
     /* 5. Main thread sleep */
-    sleep(sleep_time);
+    usleep(sleep_time * 1000000);
 
     /* 6. Exit */
-    // Semaphore Cleanup
-    sem_close(empty_sempahore);
-    sem_unlink("/empty_semaphore");
-    sem_close(full_sempahore);
-    sem_unlink("/full_sempahore");
-    // Mutex Destruction
-    pthread_mutex_destroy(&lock);
-    /* -------------------------------
-        sem_destroy(&empty_sempahore);
-        sem_destroy(&full_sempahore);
-       ------------------------------- */
+    should_run = false;
+    pthread_mutex_destroy(&mutex);
+    sem_destroy(&sema_empty);
+    sem_destroy(&sema_full);
+    exit(0);
+
+    return 0;
 }

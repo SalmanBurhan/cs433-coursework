@@ -1,7 +1,7 @@
 /**
  * Assignment 4: Producer Consumer Problem
  * @file buffer.cpp
- * @author ??? (TODO: your name)
+ * @author Salman Burhan
  * @brief Implementation file for the buffer class
  * @version 0.1
  */
@@ -17,11 +17,7 @@
  * exceed the size of the buffer.
  */
 
-Buffer::Buffer(int size) {
-    maxSize = size;
-    count = 0;
-    items.resize(maxSize);
-}
+Buffer::Buffer() { count = 0; }
 
 /**
  * @brief Destroy the Buffer object
@@ -38,7 +34,8 @@ bool Buffer::insert_item(buffer_item item) {
     if (is_full()) {
         return false;
     }
-    items.push_back(item);
+
+    buffer[count] = item;
     count++;
     return true;
 }
@@ -52,8 +49,15 @@ bool Buffer::remove_item(buffer_item *item) {
     if (is_empty()) {
         return false;
     }
-    *item = items.back();
-    items.pop_back();
+
+    buffer_item popped_item = buffer[0];
+    *item = popped_item;
+    // Shift remaining elements
+    for (int i = 0; i < get_size() - 1; ++i) {
+        buffer[i] = buffer[i + 1];
+    }
+    count--;
+
     return true;
 }
 
@@ -61,7 +65,7 @@ bool Buffer::remove_item(buffer_item *item) {
  * @brief Get the size of the buffer
  * @return the size of the buffer
  */
-int Buffer::get_size() { return maxSize; }
+int Buffer::get_size() { return size; }
 
 /**
  * @brief Get the number of items in the buffer
@@ -80,14 +84,25 @@ bool Buffer::is_empty() { return count == 0; }
  * @return true if the buffer is full, else false
  */
 
-bool Buffer::is_full() { return count == maxSize; }
+bool Buffer::is_full() { return count == get_size(); }
 
 /**
  * @brief Print the buffer
  */
 void Buffer::print_buffer() {
-    for (const buffer_item &item : items) {
-        std::cout << item << " ";
+    std::cout << "Buffer: [";
+    for (int i = 0; i < get_count(); i++) {
+        if (i == 0) {
+            if (count == 1) {
+                std::cout << buffer[i];
+            } else {
+                std::cout << buffer[i] << ",";
+            }
+        } else if (i == count - 1) {
+            std::cout << " " << buffer[i];
+        } else {
+            std::cout << " " << buffer[i] << ",";
+        }
     }
-    std::cout << std::endl;
+    std::cout << "]" << std::endl;
 }
