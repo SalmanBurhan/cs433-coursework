@@ -9,6 +9,7 @@
 #pragma once
 
 #include "replacement.h"
+#include <queue>
 
 /**
  * @brief The First-In-First-Out (FIFO) page replacement algorithm.
@@ -21,9 +22,7 @@
 class FIFOReplacement : public Replacement
 {
 private:
-    int *frame_queue;   // Array to store the frame queue
-    int queue_head = 0; // Index of the head of the queue
-    int queue_tail = 0; // Index of the tail of the queue
+    queue<int> frame_queue;
 
 public:
     /**
@@ -38,14 +37,6 @@ public:
      * @brief Destructor for the FIFOReplacement class.
      */
     virtual ~FIFOReplacement();
-
-    /**
-     * @brief Copy constructor for FIFOReplacement class.
-     * Included since it has dynamic memory/resource allocation(s)
-     *
-     * @param other The object to be copied.
-     */
-    FIFOReplacement(const FIFOReplacement &other);
 
     /**
      * @brief Access an invalid page when free frames are available.

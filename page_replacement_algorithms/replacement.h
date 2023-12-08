@@ -26,13 +26,12 @@
 class Replacement
 {
 protected:
-    PageTable page_table;          // The page table
-    int num_frames = 0;            // Number of available free frames
-    int num_references = 0;        // Number of page references
-    int num_page_faults = 0;       // Number of page faults
-    int num_page_replacements = 0; // Number of page replacements
-    int total_frames;              // Total number of frames
-    int total_pages;               // Total number of logical pages
+    PageTable page_table;
+    int num_faults = 0;
+    int total_frames = 0;
+    int frame_number = 0;
+    int num_references = 0;
+    int num_replacements = 0;
 
 public:
     /**

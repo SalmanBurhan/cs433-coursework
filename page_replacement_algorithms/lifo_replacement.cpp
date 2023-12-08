@@ -18,7 +18,7 @@
 LIFOReplacement::LIFOReplacement(int num_pages, int num_frames)
     : Replacement(num_pages, num_frames)
 {
-    frame_stack = new int[num_frames];
+    total_frames = num_frames;
 }
 
 /**
@@ -26,22 +26,7 @@ LIFOReplacement::LIFOReplacement(int num_pages, int num_frames)
  */
 LIFOReplacement::~LIFOReplacement()
 {
-    delete[] frame_stack;
-}
-
-/**
- * @brief Copy constructor for LIFOReplacement class.
- *
- * @param other The LIFOReplacement object to be copied.
- */
-LIFOReplacement::LIFOReplacement(const LIFOReplacement &other)
-    : Replacement(other)
-{
-    frame_stack = new int[other.total_frames];
-    for (int i = 0; i < other.total_frames; i++)
-    {
-        frame_stack[i] = other.frame_stack[i];
-    }
+    frame_queue.clear();
 }
 
 /**
@@ -51,11 +36,16 @@ LIFOReplacement::LIFOReplacement(const LIFOReplacement &other)
  */
 void LIFOReplacement::load_page(int page_num)
 {
+    // sets page to valid, assigns `frame_number`
     page_table[page_num].valid = true;
-    page_table[page_num].frame_num = stack_top;
-    frame_stack[stack_top] = page_num;
-    stack_top++;
-    num_page_faults++;
+    page_table[page_num].frame_num = frame_number;
+
+    // decrements `total_frames` , increments `frame_number`
+    total_frames--;
+    frame_number++;
+
+    // adds new page to back of queue.
+    frame_queue.push_back(page_num);
 }
 
 /**
@@ -66,11 +56,17 @@ void LIFOReplacement::load_page(int page_num)
  */
 int LIFOReplacement::replace_page(int page_num)
 {
-    int frame_num = page_table[page_num].frame_num;
+    // gets back of queue, pops it
+    int temp = frame_queue.back();
+    frame_queue.pop_back();
+
+    // sets page to invalid, assigns `frame_number`
+    page_table[temp].valid = false;
     page_table[page_num].valid = true;
-    page_table[page_num].frame_num = frame_num;
-    frame_stack[stack_top] = page_num;
-    stack_top++;
-    num_page_faults++;
+    page_table[page_num].frame_num = page_table[temp].frame_num;
+
+    // adds new page to back of queue.
+    frame_queue.push_back(page_num);
+
     return 0;
 }

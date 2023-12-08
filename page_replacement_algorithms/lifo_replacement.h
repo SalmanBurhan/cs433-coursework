@@ -24,8 +24,7 @@
 class LIFOReplacement : public Replacement
 {
 private:
-    int *frame_stack;  // Array to store the frame stack
-    int stack_top = 0; // Index of the top of the stack
+    vector<int> frame_queue;
 
 public:
     /**
@@ -39,12 +38,6 @@ public:
      * @brief Destructor
      */
     virtual ~LIFOReplacement();
-
-    /**
-     * @brief Copy constructor
-     * @param other The object to be copied.
-     */
-    LIFOReplacement(const LIFOReplacement &other);
 
     /**
      * @brief Access an invalid page, but free frames are available.

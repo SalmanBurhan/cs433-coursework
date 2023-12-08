@@ -17,7 +17,7 @@
 FIFOReplacement::FIFOReplacement(int num_pages, int num_frames)
     : Replacement(num_pages, num_frames)
 {
-    frame_queue = new int[num_frames];
+    total_frames = num_frames;
 }
 
 /**
@@ -26,23 +26,8 @@ FIFOReplacement::FIFOReplacement(int num_pages, int num_frames)
  */
 FIFOReplacement::~FIFOReplacement()
 {
-    delete[] frame_queue;
-}
-
-/**
- * @brief Copy constructor for FIFOReplacement class.
- * Included since it has dynamic memory/resource allocation(s)
- *
- * @param other The object to be copied.
- */
-FIFOReplacement::FIFOReplacement(const FIFOReplacement &other)
-    : Replacement(other)
-{
-    frame_queue = new int[other.total_frames];
-    for (int i = 0; i < other.total_frames; i++)
-    {
-        frame_queue[i] = other.frame_queue[i];
-    }
+    while (!frame_queue.empty())
+        frame_queue.pop();
 }
 
 /**
@@ -52,12 +37,16 @@ FIFOReplacement::FIFOReplacement(const FIFOReplacement &other)
  */
 void FIFOReplacement::load_page(int page_num)
 {
+    // sets page to valid, assigns `frame_number`
     page_table[page_num].valid = true;
-    page_table[page_num].frame_num = num_frames;
-    frame_queue[queue_tail] = page_num;
-    queue_tail++;
-    num_frames++;
-    num_page_faults++;
+    page_table[page_num].frame_num = frame_number;
+
+    // decrements `total_frames` , increments `frame_number`
+    total_frames--;
+    frame_number++;
+
+    // adds new node to back
+    frame_queue.push(page_num);
 }
 
 /**
@@ -68,17 +57,19 @@ void FIFOReplacement::load_page(int page_num)
  */
 int FIFOReplacement::replace_page(int page_num)
 {
-    int victim = frame_queue[queue_head];
-    page_table[victim].valid = false;
+    // gets front of queue, pops it
+    int temp = frame_queue.front();
+    frame_queue.pop();
+
+    // sets old page to invalid, new page to valid
+    page_table[temp].valid = false;
     page_table[page_num].valid = true;
-    page_table[page_num].frame_num = page_table[victim].frame_num;
-    frame_queue[queue_head] = page_num;
-    queue_head++;
-    if (queue_head == total_frames)
-    {
-        queue_head = 0;
-    }
-    num_page_faults++;
-    num_page_replacements++;
+
+    // sets new page's frame number to old page's frame number.
+    page_table[page_num].frame_num = page_table[temp].frame_num;
+
+    // adds new page to back of queue.
+    frame_queue.push(page_num);
+
     return 0;
 }
